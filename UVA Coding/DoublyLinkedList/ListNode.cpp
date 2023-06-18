@@ -10,7 +10,7 @@ using namespace std;
  * The value is set to 0 by default, and both the next and previous pointers are set to NULL.
  */
 template <typename T>
-ListNode<T>::ListNode(T x)
+ListNode<T>::ListNode(T x = T())
 {
     value = x;
     next = nullptr;
