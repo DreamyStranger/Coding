@@ -1,0 +1,4 @@
+/home/m/Documents/GitHub/Coding/UVA Coding/DoublyLinkedList/build/CMakeFiles/ListTest.dir
+/home/m/Documents/GitHub/Coding/UVA Coding/DoublyLinkedList/build/CMakeFiles/test.dir
+/home/m/Documents/GitHub/Coding/UVA Coding/DoublyLinkedList/build/CMakeFiles/edit_cache.dir
+/home/m/Documents/GitHub/Coding/UVA Coding/DoublyLinkedList/build/CMakeFiles/rebuild_cache.dir
