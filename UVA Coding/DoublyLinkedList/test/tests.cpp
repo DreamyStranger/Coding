@@ -25,8 +25,19 @@ TEST_CASE("Find returns the correct iterator position")
     list.insertAtTail(10);
     list.insertAtTail(20);
     list.insertAtTail(30);
-    ListItr<int> itr = list.find(20);
-    CHECK(itr.retrieve() == 20);
+
+    SUBCASE("Find a value present in the list")
+    {
+        ListItr<int> itr = list.find(20);
+        CHECK(itr.isPastEnd() == false);
+        CHECK(itr.retrieve() == 20);
+    }
+    
+    SUBCASE("Find a value not present in the list")
+    {
+        ListItr<int> itr = list.find(200);
+        CHECK(itr.isPastEnd() == true);
+    }
 }
 
 TEST_CASE("Removing an element reduces the size of the list")
