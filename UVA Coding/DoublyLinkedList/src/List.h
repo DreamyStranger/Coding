@@ -7,10 +7,10 @@
 #include "ListNode.h"
 #include "ListItr.h"
 
-template<typename T>
+template <typename T>
 class ListNode;
 
-template<typename T>
+template <typename T>
 class ListItr;
 
 using namespace std;
@@ -206,18 +206,18 @@ bool List<T>::isEmpty() const
 template <typename T>
 void List<T>::makeEmpty()
 {
-    ListItr<T> position = first();
-    while (!position.isPastEnd())
+    while (!isEmpty())
     {
-        ListItr<T> next = position;
-        next.moveForward();
-        position.current->next->previous = position.current->previous; // Update previous pointer
-        position.current->previous->next = position.current->next;
-        delete position.current;
-        position = next;
+
+        ListItr<T> iter = first();
+
+        (iter.current->previous)->next = iter.current->next;
+
+        (iter.current->next)->previous = iter.current->previous;
+
+        delete iter.current;
     }
-    head->next = tail;
-    tail->previous = head;
+
     count = 0;
 }
 

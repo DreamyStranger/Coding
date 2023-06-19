@@ -10,54 +10,53 @@ TEST_CASE("Empty list is initialized correctly")
     CHECK(list.size() == 0);
 }
 
-TEST_CASE("Inserting elements increases the size of the list")
+TEST_CASE("Test insert")
 {
     List<int> list;
-    list.insertAtTail(10);
-    list.insertAtTail(20);
-    list.insertAtTail(30);
-    CHECK(list.size() == 3);
-}
+    ListItr<int> itr = list.last(); // to get the head
 
-TEST_CASE("Find returns the correct iterator position")
-{
-    List<int> list;
-    list.insertAtTail(10);
-    list.insertAtTail(20);
-    list.insertAtTail(30);
-
-    SUBCASE("Find a value present in the list")
+    SUBCASE("Insert after")
     {
-        ListItr<int> itr = list.find(20);
-        CHECK(itr.isPastEnd() == false);
+        list.insertAfter(10, itr);
+        itr.moveForward();
+        CHECK(itr.retrieve() == 10);
+
+        list.insertAfter(30, itr);
+        itr.moveForward();
+        CHECK(itr.retrieve() == 30);
+
+        itr.moveBackward();
+        list.insertAfter(20, itr);
+        itr.moveForward();
         CHECK(itr.retrieve() == 20);
-    }
-    
-    SUBCASE("Find a value not present in the list")
-    {
-        ListItr<int> itr = list.find(200);
+
+        itr = list.first();
+        itr.moveForward();
+        CHECK(itr.retrieve() == 20);
+
+        itr = list.last();
+        itr.moveForward();
+        itr.moveForward();
         CHECK(itr.isPastEnd() == true);
     }
-}
 
-TEST_CASE("Removing an element reduces the size of the list")
-{
-    List<int> list;
+    CHECK(list.isEmpty() == false);
+
+    list.makeEmpty();
+    CHECK(list.isEmpty() == true);
+    list.makeEmpty();
+    CHECK(list.isEmpty() == true);
+
     list.insertAtTail(10);
+    itr = list.last();
+    CHECK(itr.retrieve() == 10);
+
     list.insertAtTail(20);
     list.insertAtTail(30);
-    list.remove(20);
-    CHECK(list.size() == 2);
-}
+    itr = list.last();
+    CHECK(itr.retrieve() == 30);
 
-TEST_CASE("Test insertAfter and insertBefore")
-{
-    List<int> list;
-    list.insertAtTail(10);
-    list.insertAtTail(20);
-    list.insertAtTail(30);
-
-    ListItr<int> itr = list.find(20);
+    itr.moveBackward();
     list.insertAfter(25, itr);
     list.insertBefore(15, itr);
 
@@ -71,6 +70,15 @@ TEST_CASE("Test insertAfter and insertBefore")
     list.print(true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 15 20 25 30 \n");
+}
+
+TEST_CASE("Inserting elements increases the size of the list")
+{
+    List<int> list;
+    list.insertAtTail(10);
+    list.insertAtTail(20);
+    list.insertAtTail(30);
+    CHECK(list.size() == 3);
 }
 
 TEST_CASE("Test remove")
@@ -92,6 +100,37 @@ TEST_CASE("Test remove")
     list.print(true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 \n");
+}
+
+TEST_CASE("Removing an element reduces the size of the list")
+{
+    List<int> list;
+    list.insertAtTail(10);
+    list.insertAtTail(20);
+    list.insertAtTail(30);
+    list.remove(20);
+    CHECK(list.size() == 2);
+}
+
+TEST_CASE("Find returns the correct iterator position")
+{
+    List<int> list;
+    list.insertAtTail(10);
+    list.insertAtTail(20);
+    list.insertAtTail(30);
+
+    SUBCASE("Find a value present in the list")
+    {
+        ListItr<int> itr = list.find(20);
+        CHECK(itr.isPastEnd() == false);
+        CHECK(itr.retrieve() == 20);
+    }
+
+    SUBCASE("Find a value not present in the list")
+    {
+        ListItr<int> itr = list.find(200);
+        CHECK(itr.isPastEnd() == true);
+    }
 }
 
 TEST_CASE("Test copy constructor")
