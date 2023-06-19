@@ -55,6 +55,18 @@ TEST_CASE_FIXTURE(TestFixture, "Test insert")
         CHECK(itr.retrieve() == 30);
     }
 
+    SUBCASE("Insert at front ")
+    {
+        list.insertAtFront(10);
+        itr = list.first();
+        CHECK(itr.retrieve() == 10);
+
+        list.insertAtFront(20);
+        list.insertAtFront(30);
+        itr = list.first();
+        CHECK(itr.retrieve() == 30);
+    }
+
     SUBCASE("Insert before")
     {
         list.insertAtTail(10);
@@ -80,6 +92,14 @@ TEST_CASE_FIXTURE(TestFixture, "Test insert")
 TEST_CASE("Printing the list")
 {
     List<int> list;
+
+    std::ostringstream oss;
+    auto coutBuf = std::cout.rdbuf();
+    std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
+    list.print(oss, true);
+    std::cout.rdbuf(coutBuf); // Restore cout's original buffer
+    CHECK(oss.str() == "\n");
+
     list.insertAtTail(10);
     list.insertAtTail(20);
     list.insertAtTail(30);
@@ -89,7 +109,7 @@ TEST_CASE("Printing the list")
         std::ostringstream oss;
         auto coutBuf = std::cout.rdbuf();
         std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-        list.print(true);
+        list.print(oss, true);
         std::cout.rdbuf(coutBuf); // Restore cout's original buffer
         CHECK(oss.str() == "10 20 30 \n");
     }
@@ -99,7 +119,7 @@ TEST_CASE("Printing the list")
         std::ostringstream oss;
         auto coutBuf = std::cout.rdbuf();
         std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-        list.print(false);
+        list.print(oss, false);
         std::cout.rdbuf(coutBuf); // Restore cout's original buffer
         CHECK(oss.str() == "30 20 10 \n");
     }
@@ -109,7 +129,7 @@ TEST_CASE("Test remove")
 {
     List<int> list;
     list.remove(10);
-    CHECK(list.isEmpty()== true);
+    CHECK(list.isEmpty() == true);
 
     list.insertAtTail(10);
     list.remove(100);
@@ -117,7 +137,6 @@ TEST_CASE("Test remove")
 
     list.remove(10);
     CHECK(list.isEmpty() == true);
-
 
     list.insertAtTail(10);
     list.insertAtTail(20);
@@ -127,7 +146,7 @@ TEST_CASE("Test remove")
     std::ostringstream oss;
     auto coutBuf = std::cout.rdbuf();
     std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-    list.print(true);
+    list.print(oss, true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 \n");
 
@@ -216,7 +235,7 @@ TEST_CASE("Test copy constructor")
     std::ostringstream oss;
     auto coutBuf = std::cout.rdbuf();
     std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-    list2.print(true);
+    list2.print(oss, true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 30 \n");
 }
@@ -245,7 +264,7 @@ TEST_CASE("Test assignment operator")
     std::ostringstream oss;
     auto coutBuf = std::cout.rdbuf();
     std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-    list2.print(true);
+    list2.print(oss, true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 30 \n");
 }

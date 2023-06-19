@@ -109,6 +109,13 @@ public:
     void insertAtTail(T x);
 
     /**
+     * @brief Inserts a value at the front of the list.
+     *
+     * @param x The value to be inserted.
+     */
+    void insertAtFront(T x);
+
+    /**
      * @brief Returns an iterator that points to the first occurrence of a value.
      *
      * If the value is not found in the list, it returns a ListItr object that points to the dummy tail node.
@@ -132,12 +139,12 @@ public:
     int size() const;
 
     /**
-    @brief Prints the contents of the list forwards (head -> tail) or backwards (tail -> head).
-    This function uses the ListItr class to iterate through the list and prints the values in the specified order.
-    @param source The List to be printed.
-    @param forward True to print forwards (head -> tail), false to print backwards (tail -> head).
-    */
-    void print(bool forward);
+     * @brief Prints the contents of the list forwards (head -> tail) or backwards (tail -> head).
+     * This function uses the ListItr class to iterate through the list and prints the values in the specified order.
+     * @param os The output stream to which the list is printed.
+     * @param forward True to print forwards (head -> tail), false to print backwards (tail -> head).
+     */
+    void print(std::ostream &os = std::cout, bool forward = true);
 
 private:
     ListNode<T> *head; // Dummy node representing the beginning of the list
@@ -272,6 +279,12 @@ void List<T>::insertAtTail(T x)
 }
 
 template <typename T>
+void List<T>::insertAtFront(T x)
+{
+    insertAfter(x, ListItr<T>(head));
+}
+
+template <typename T>
 ListItr<T> List<T>::find(T x)
 {
     ListItr<T> iter = first();
@@ -302,23 +315,25 @@ int List<T>::size() const
 }
 
 template <typename T>
-void List<T>::print(bool forward)
+void List<T>::print(std::ostream &os, bool forward)
 {
+    os<<"";
+    
     if (forward)
     {
         for (ListItr<T> itr = first(); !itr.isPastEnd(); itr.moveForward())
         {
-            cout << itr.retrieve() << " ";
+            os << itr.retrieve() << " ";
         }
     }
     else
     {
         for (ListItr<T> itr = last(); !itr.isPastBeginning(); itr.moveBackward())
         {
-            cout << itr.retrieve() << " ";
+            os << itr.retrieve() << " ";
         }
     }
-    cout << endl;
+    os << std::endl;
 }
 
 #endif
