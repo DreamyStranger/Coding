@@ -3,16 +3,19 @@
 #include "../external/doctest/doctest.h"
 #include "../src/List.h"
 
+struct TestFixture
+{
+    List<int> list;
+};
+
 TEST_CASE("Empty list is initialized correctly")
 {
     List<int> list;
     CHECK(list.isEmpty());
-    CHECK(list.size() == 0);
 }
 
-TEST_CASE("Test insert")
+TEST_CASE_FIXTURE(TestFixture, "Test insert")
 {
-    List<int> list;
     ListItr<int> itr = list.last(); // to get the head
 
     SUBCASE("Insert after")
@@ -40,76 +43,136 @@ TEST_CASE("Test insert")
         CHECK(itr.isPastEnd() == true);
     }
 
-    CHECK(list.isEmpty() == false);
+    SUBCASE("Insert at tail ")
+    {
+        list.insertAtTail(10);
+        itr = list.last();
+        CHECK(itr.retrieve() == 10);
 
-    list.makeEmpty();
-    CHECK(list.isEmpty() == true);
-    list.makeEmpty();
-    CHECK(list.isEmpty() == true);
+        list.insertAtTail(20);
+        list.insertAtTail(30);
+        itr = list.last();
+        CHECK(itr.retrieve() == 30);
+    }
 
-    list.insertAtTail(10);
-    itr = list.last();
-    CHECK(itr.retrieve() == 10);
+    SUBCASE("Insert before")
+    {
+        list.insertAtTail(10);
+        list.insertAtTail(20);
+        list.insertAtTail(30);
+        itr = list.last();
+        itr.moveBackward();
 
-    list.insertAtTail(20);
-    list.insertAtTail(30);
-    itr = list.last();
-    CHECK(itr.retrieve() == 30);
+        list.insertAfter(25, itr);
+        list.insertBefore(15, itr);
+        itr.moveForward();
+        CHECK(itr.retrieve() == 25);
 
-    itr.moveBackward();
-    list.insertAfter(25, itr);
-    list.insertBefore(15, itr);
+        itr.moveBackward();
+        itr.moveBackward();
+        CHECK(itr.retrieve() == 15);
 
-    CHECK(list.size() == 5);
-    CHECK(list.first().retrieve() == 10);
-    CHECK(list.last().retrieve() == 30);
-
-    std::ostringstream oss;
-    auto coutBuf = std::cout.rdbuf();
-    std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-    list.print(true);
-    std::cout.rdbuf(coutBuf); // Restore cout's original buffer
-    CHECK(oss.str() == "10 15 20 25 30 \n");
+        CHECK(list.first().retrieve() == 10);
+        CHECK(list.last().retrieve() == 30);
+    }
 }
 
-TEST_CASE("Inserting elements increases the size of the list")
+TEST_CASE("Printing the list")
 {
     List<int> list;
     list.insertAtTail(10);
     list.insertAtTail(20);
     list.insertAtTail(30);
-    CHECK(list.size() == 3);
+
+    SUBCASE("Printing forward")
+    {
+        std::ostringstream oss;
+        auto coutBuf = std::cout.rdbuf();
+        std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
+        list.print(true);
+        std::cout.rdbuf(coutBuf); // Restore cout's original buffer
+        CHECK(oss.str() == "10 20 30 \n");
+    }
+
+    SUBCASE("Printing backward")
+    {
+        std::ostringstream oss;
+        auto coutBuf = std::cout.rdbuf();
+        std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
+        list.print(false);
+        std::cout.rdbuf(coutBuf); // Restore cout's original buffer
+        CHECK(oss.str() == "30 20 10 \n");
+    }
 }
 
 TEST_CASE("Test remove")
 {
     List<int> list;
+    list.remove(10);
+    CHECK(list.isEmpty()== true);
+
+    list.insertAtTail(10);
+    list.remove(100);
+    CHECK(list.isEmpty() == false);
+
+    list.remove(10);
+    CHECK(list.isEmpty() == true);
+
+
     list.insertAtTail(10);
     list.insertAtTail(20);
     list.insertAtTail(30);
 
     list.remove(30);
-
-    CHECK(list.size() == 2);
-    CHECK(list.first().retrieve() == 10);
-    CHECK(list.last().retrieve() == 20);
-
     std::ostringstream oss;
     auto coutBuf = std::cout.rdbuf();
     std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
     list.print(true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 \n");
+
+    list.remove(20);
+    list.remove(10);
+    CHECK(list.isEmpty() == true);
 }
 
-TEST_CASE("Removing an element reduces the size of the list")
+TEST_CASE("MakeEmpty, isEmpty, size")
 {
     List<int> list;
+    CHECK(list.isEmpty());
+    CHECK(list.size() == 0);
+
+    list.makeEmpty();
+    CHECK(list.isEmpty());
+    CHECK(list.size() == 0);
+
     list.insertAtTail(10);
-    list.insertAtTail(20);
-    list.insertAtTail(30);
+    CHECK(list.size() == 1);
+
+    ListItr<int> itr = list.first();
+    list.insertAfter(20, itr);
+    list.insertBefore(30, itr);
+    CHECK(list.size() == 3);
+
+    list.remove(200);
+    CHECK(list.size() == 3);
+
+    list.remove(10);
+
     list.remove(20);
-    CHECK(list.size() == 2);
+    CHECK(list.size() == 1);
+
+    list.remove(30);
+    CHECK(list.size() == 0);
+
+    list.insertAtTail(10);
+    list.makeEmpty();
+    CHECK(list.size() == 0);
+
+    list.insertAtTail(10);
+    list.insertAtTail(10);
+    list.makeEmpty();
+    CHECK(list.size() == 0);
 }
 
 TEST_CASE("Find returns the correct iterator position")
@@ -185,32 +248,4 @@ TEST_CASE("Test assignment operator")
     list2.print(true);
     std::cout.rdbuf(coutBuf); // Restore cout's original buffer
     CHECK(oss.str() == "10 20 30 \n");
-}
-
-TEST_CASE("Printing the list")
-{
-    List<int> list;
-    list.insertAtTail(10);
-    list.insertAtTail(20);
-    list.insertAtTail(30);
-
-    SUBCASE("Printing forward")
-    {
-        std::ostringstream oss;
-        auto coutBuf = std::cout.rdbuf();
-        std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-        list.print(true);
-        std::cout.rdbuf(coutBuf); // Restore cout's original buffer
-        CHECK(oss.str() == "10 20 30 \n");
-    }
-
-    SUBCASE("Printing backward")
-    {
-        std::ostringstream oss;
-        auto coutBuf = std::cout.rdbuf();
-        std::cout.rdbuf(oss.rdbuf()); // Redirect cout to ostringstream
-        list.print(false);
-        std::cout.rdbuf(coutBuf); // Restore cout's original buffer
-        CHECK(oss.str() == "30 20 10 \n");
-    }
 }
