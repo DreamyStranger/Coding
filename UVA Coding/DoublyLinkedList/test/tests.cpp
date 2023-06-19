@@ -197,13 +197,16 @@ TEST_CASE("MakeEmpty, isEmpty, size")
 TEST_CASE("Find returns the correct iterator position")
 {
     List<int> list;
+    ListItr<int> itr = list.find(25);
+    CHECK(itr.isPastEnd() == true);
+    
     list.insertAtTail(10);
     list.insertAtTail(20);
     list.insertAtTail(30);
 
     SUBCASE("Find a value present in the list")
     {
-        ListItr<int> itr = list.find(20);
+        itr = list.find(20);
         CHECK(itr.isPastEnd() == false);
         CHECK(itr.retrieve() == 20);
     }
