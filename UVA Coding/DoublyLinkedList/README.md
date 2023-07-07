@@ -1,7 +1,7 @@
 # Doubly Linked List in C++
 
 ## Description
-This repository contains the implementation of a generic Doubly Linked List in C++, along with comprehensive unit tests.
+This folder contains the implementation of a generic Doubly Linked List in C++, along with comprehensive unit tests.
 
 ## Features
 
